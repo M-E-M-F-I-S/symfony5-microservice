@@ -42,6 +42,14 @@ class Settings
      */
     private $value;
 
+    public function __construct(string $type, string $field, string $value)
+    {
+        $this->validate($type);
+        $this->type = $type;
+        $this->field = $field;
+        $this->value = $value;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -54,9 +62,7 @@ class Settings
 
     public function setType(string $type): self
     {
-        if (! in_array($type, self::ALLOWED_TYPES)) {
-            throw new Exception(sprintf('Type %s is not a valid settings type!', $type));
-        }
+        $this->validate($type);
         $this->type = $type;
 
         return $this;
@@ -84,5 +90,12 @@ class Settings
         $this->value = $value;
 
         return $this;
+    }
+
+    private function validate(string $type) : void
+    {
+        if (! in_array($type, self::ALLOWED_TYPES)) {
+            throw new Exception(sprintf('Type %s is not a valid settings type!', $type));
+        }
     }
 }

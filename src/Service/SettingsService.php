@@ -24,17 +24,17 @@ class SettingsService
 
     public function addSettings(string $type, array $data): JsonResponse
     {
-        foreach ($data as $field => $value) {
-            if (empty($type) || empty($field) || empty($value)) {
-                throw new NotFoundHttpException('Expecting mandatory parameters!');
-            }
-            $newSettings = new Settings();
-            $newSettings->setType($type)
-                ->setField($field)
-                ->setValue($value);
-
-            $this->settingsRepository->save($newSettings);
+        if ($exist = $this->settingsRepository->findOneBy(['id' => $data['id']])) {
+            return $this->updateSettings($data['id'], $data);
         }
+
+        if (empty($data['type']) || empty($data['field']) || empty($data['value'])) {
+            throw new NotFoundHttpException('Expecting mandatory parameters! $type ' . $type . ', $field ' . $field . ', $value ' . $value);
+        }
+
+        $newSettings = new Settings($data['type'], $data['field'], $data['value']);
+
+        $this->settingsRepository->save($newSettings);
 
         return new JsonResponse(['status' => 'Settings saved!'], Response::HTTP_CREATED);
     }
@@ -59,13 +59,21 @@ class SettingsService
         $result = [];
         switch ($type) {
             case Settings::TYPE_REST:
-                $response = $this->restClient->request(
-                    'http://remote.microservice/settings'
-                );
+                //expected something like this
+//                $response = $this->restClient->request(
+//                    'http://remote.microservice/settings'
+//                );
+//                $result = $response->toArray();
 
-                $result = $response->toArray();
-                foreach ($result as $data) {
+                $id = random_int(1, 999);
+                $response[] = [
+                    'id'    => $id,
+                    'field' => 'field' . $id,
+                    'value' => 'value' . $id
+                ];
+                foreach ($response as $data) {
                     $result[] = [
+                        'type'  => Settings::TYPE_REST,
                         'id'    => $data['id'],
                         'field' => $data['field'],
                         'value' => $data['value'],
@@ -74,13 +82,20 @@ class SettingsService
                 break;
 
             case Settings::TYPE_RPC:
-                $response = $this->grpcClient->request(
-                    'http://remote.microservice/settings'
-                );
+                //expected something like this
+//                $response = $this->grpcClient->request(
+//                    'http://remote.microservice/settings'
+//                );
 
-                $result = $response->toArray();
-                foreach ($result as $data) {
+                $id = random_int(1, 999);
+                $response[] = [
+                    'id'    => $id,
+                    'field' => 'field' . $id,
+                    'value' => 'value' . $id
+                ];
+                foreach ($response as $data) {
                     $result[] = [
+                        'type'  => Settings::TYPE_RPC,
                         'id'    => $data['id'],
                         'field' => $data['field'],
                         'value' => $data['value'],
@@ -89,14 +104,21 @@ class SettingsService
                 break;
 
             case Settings::TYPE_HTTP:
-                $response = $this->httpClient->request(
-                    'GET',
-                    'http://remote.microservice/settings'
-                );
+                //expected something like this
+//                $response = $this->httpClient->request(
+//                    'GET',
+//                    'http://remote.microservice/settings'
+//                );
 
-                $result = $response->toArray();
-                foreach ($result as $data) {
+                $id = random_int(1, 999);
+                $response[] = [
+                    'id'    => $id,
+                    'field' => 'field' . $id,
+                    'value' => 'value' . $id
+                ];
+                foreach ($response as $data) {
                     $result[] = [
+                        'type'  => Settings::TYPE_HTTP,
                         'id'    => $data['id'],
                         'field' => $data['field'],
                         'value' => $data['value'],

@@ -17,6 +17,7 @@
                 <thead>
                     <tr>
                         <td>ID</td>
+                        <td>Type</td>
                         <td>Field</td>
                         <td>Value</td>
                         <td></td>
@@ -25,13 +26,14 @@
                 <tbody>
                     {% for key, row in data %}
                         <tr>
-                            <form class="ui form" action="/api/{{ row.id }}" method="post">
+                            <form class="ui form" action="/api" method="post">
                                 <td>{{ row.id }}</td>
+                                <td>{{ row.type }}</td>
                                 <td><input type="text" name="field" value="{{ row.field }}"></td>
                                 <td><input type="text" name="value" value="{{ row.value }}"></td>
                                 <td>
                                     <input type="hidden" name="type" value="{{ row.type }}">
-                                    <input type='hidden' name='_method' value='PUT'>
+                                    <input type="hidden" name="id" value="{{ row.id }}">
                                     <input type="hidden" name="_target_path" value="/load/{{ type }}"/>
                                     <button class="ui button" type="submit">Save</button>
                                 </td>
@@ -47,16 +49,16 @@
         <h1>Choose settings to load:</h1>
         <section class="ui container">
             <form class="ui form" action="/load/MySQL" method="get">
-                <button class="ui button" type="submit">MySQL</button>
+                <button class="ui button" type="submit">Show all settings stored in DB</button>
             </form>
             <form class="ui form" action="/load/RestAPI" method="get">
-                <button class="ui button" type="submit">RestAPI</button>
+                <button class="ui button" type="submit">Get RestAPI settings</button>
             </form>
             <form class="ui form" action="/load/gRPC" method="get">
-                <button class="ui button" type="submit">gRPC</button>
+                <button class="ui button" type="submit">Get gRPC settings</button>
             </form>
             <form class="ui form" action="/load/http" method="get">
-                <button class="ui button" type="submit">Http</button>
+                <button class="ui button" type="submit">Get Http settings</button>
             </form>
         </section>
     {% endif %}

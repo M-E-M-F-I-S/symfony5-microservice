@@ -25,20 +25,28 @@ class SettingsController
     /**
      * @Route("/api", name="add_settings", methods={"POST"})
      */
-    public function add(Request $request): JsonResponse
+    public function add(Request $request)
     {
-        $data = json_decode($request->getContent(), true);
-        $type = $data['type'];
-        unset($data['type']);
-        $this->validateRequest($type);
+        $data['id']    = $request->request->get('id');
+        $data['field'] = $request->request->get('field');
+        $data['value'] = $request->request->get('value');
+        $data['type']  = $request->request->get('type');
 
-        return $this->settingsService->addSettings($type, $data);
+        $this->validateRequest($data['type'] ?? null);
+
+        $result = $this->settingsService->addSettings($data['type'], $data);
+
+        if ($redirect = $request->get('_target_path')) {
+            return new RedirectResponse($redirect);
+        }
+
+        return $result;
     }
 
     /**
      * @Route("/api/{type}", name="get_settings_by_type", methods={"GET"})
      */
-    public function get(?string $type = null): JsonResponse
+    public function get(?string $type = null)
     {
         $this->validateRequest($type);
 
