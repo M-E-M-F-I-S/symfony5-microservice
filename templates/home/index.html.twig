@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello, microservice!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    {% if data %}
+        <h1>Loaded {{ type }} settings! ✅</h1>
+
+        <section class="ui container">
+            <table>
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Field</td>
+                        <td>Value</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, row in data %}
+                        <tr>
+                            <form class="ui form" action="/api/{{ row.id }}" method="post">
+                                <td>{{ row.id }}</td>
+                                <td><input type="text" name="field" value="{{ row.field }}"></td>
+                                <td><input type="text" name="value" value="{{ row.value }}"></td>
+                                <td>
+                                    <input type="hidden" name="type" value="{{ row.type }}">
+                                    <input type='hidden' name='_method' value='PUT'>
+                                    <input type="hidden" name="_target_path" value="/load/{{ type }}"/>
+                                    <button class="ui button" type="submit">Save</button>
+                                </td>
+                            </form>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <br>
+        <a class="btn" href="/">Return</a>
+    {% else %}
+        <h1>Choose settings to load:</h1>
+        <section class="ui container">
+            <form class="ui form" action="/load/MySQL" method="get">
+                <button class="ui button" type="submit">MySQL</button>
+            </form>
+            <form class="ui form" action="/load/RestAPI" method="get">
+                <button class="ui button" type="submit">RestAPI</button>
+            </form>
+            <form class="ui form" action="/load/gRPC" method="get">
+                <button class="ui button" type="submit">gRPC</button>
+            </form>
+            <form class="ui form" action="/load/http" method="get">
+                <button class="ui button" type="submit">Http</button>
+            </form>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}
