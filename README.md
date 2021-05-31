@@ -1,4 +1,4 @@
-# symfony5-microservice
+# symfony5-microservice (test task)
 
 1) clone repo
 2) run "composer install"
